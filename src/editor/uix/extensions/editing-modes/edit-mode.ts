@@ -19,6 +19,15 @@ function isUserEvent(event: string, events: string[]): boolean {
 	return events.some(e => e.startsWith(event));
 }
 
+function deriveUserEvent(tr: Transaction): string | undefined {
+	if (tr.isUserEvent("input")) return "input";
+	if (tr.isUserEvent("paste")) return "paste";
+	if (tr.isUserEvent("delete")) return "delete";
+	const events = getUserEvents(tr);
+	const selectEvent = events.find((e: string) => e.startsWith("select"));
+	return selectEvent;
+}
+
 export const editMode = (settings: PluginSettings): Extension =>
 	EditorState.transactionFilter.of(tr => applyCorrectedEdit(tr, settings));
 
@@ -136,7 +145,15 @@ function applyCorrectedEdit(tr: Transaction, settings: PluginSettings): Transact
 			}
 		}
 
-		return tr.startState.update(changes.length ? { changes, selection: EditorSelection.create(selections) } : {});
+		const forwardedEvent = deriveUserEvent(tr);
+		if (!changes.length)
+			return tr;
+		return tr.startState.update({
+			changes,
+			selection: EditorSelection.create(selections),
+			annotations: forwardedEvent ? [Transaction.userEvent.of(forwardedEvent)] : undefined,
+			filter: false,
+		});
 	} // CASE 2: Handle cursor movements
 	else if (
 		isUserEvent("select", userEvents) && cursorMoved(tr) &&
@@ -144,8 +161,15 @@ function applyCorrectedEdit(tr: Transaction, settings: PluginSettings): Transact
 	) {
 		if (latest_event && latest_event.instanceOf(KeyboardEvent)) {
 			const result = cursor_transaction_pass_syntax(tr, userEvents, vim_mode, settings, latest_event);
-			if (result)
-				return tr.startState.update(result);
+			if (result) {
+				const forwardedEvent = deriveUserEvent(tr);
+				return tr.startState.update({
+					...result,
+					annotations: forwardedEvent ? [Transaction.userEvent.of(forwardedEvent)] : result.annotations,
+					filter: false,
+				});
+			}
+			return tr;
 		}
 	}
 
