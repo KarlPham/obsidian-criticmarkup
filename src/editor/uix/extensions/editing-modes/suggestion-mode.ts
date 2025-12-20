@@ -7,9 +7,11 @@ import { type PluginSettings } from "../../../../types";
 import {
 	cursor_move_range,
 	cursorMoved,
+    deriveUserEvent,
 	generate_metadata,
 	getEditorRanges,
 	getUserEvents,
+    isUserEvent,
 	mark_ranges,
 	MarkAction,
 	type MarkType,
@@ -84,19 +86,6 @@ const vim_action_resolver = {
 // 	{ keys: 'o', motion: 'moveToOtherHighlightedEnd', context:'visual'},
 // 	{ keys: 'O', motion: 'moveToOtherHighlightedEnd',
 // 	'moveToLineOrEdgeOfDocument':
-
-function isUserEvent(event: string, events: string[]): boolean {
-	return events.some(e => e.startsWith(event));
-}
-
-function deriveUserEvent(tr: Transaction): string | undefined {
-	if (tr.isUserEvent("input")) return "input";
-	if (tr.isUserEvent("paste")) return "paste";
-	if (tr.isUserEvent("delete")) return "delete";
-	const events = getUserEvents(tr);
-	const selectEvent = events.find((e: string) => e.startsWith("select"));
-	return selectEvent;
-}
 
 export const suggestionMode = (settings: PluginSettings): Extension =>
 	EditorState.transactionFilter.of(tr => applySuggestion(tr, settings));
@@ -204,10 +193,11 @@ function applySuggestion(tr: Transaction, settings: PluginSettings): Transaction
 			}
 		}
 
-		const forwardedEvent = deriveUserEvent(tr);
 		if (!changes.length)
 			return tr;
-		return tr.startState.update({
+
+        const forwardedEvent = deriveUserEvent(tr);
+        return tr.startState.update({
 			changes,
 			selection: EditorSelection.create(selections),
 			annotations: forwardedEvent ? [Transaction.userEvent.of(forwardedEvent)] : undefined,

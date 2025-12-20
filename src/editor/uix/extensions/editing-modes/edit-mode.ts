@@ -5,8 +5,10 @@ import { type PluginSettings } from "../../../../types";
 import {
 	cursor_move_range,
 	cursorMoved,
+    deriveUserEvent,
 	getEditorRanges,
 	getUserEvents,
+    isUserEvent,
 	mark_ranges,
 	MarkAction,
 	rangeParser,
@@ -14,19 +16,6 @@ import {
 
 import { latest_event } from "../keypress-catcher";
 import { cursor_transaction_pass_syntax } from "./cursor_movement";
-
-function isUserEvent(event: string, events: string[]): boolean {
-	return events.some(e => e.startsWith(event));
-}
-
-function deriveUserEvent(tr: Transaction): string | undefined {
-	if (tr.isUserEvent("input")) return "input";
-	if (tr.isUserEvent("paste")) return "paste";
-	if (tr.isUserEvent("delete")) return "delete";
-	const events = getUserEvents(tr);
-	const selectEvent = events.find((e: string) => e.startsWith("select"));
-	return selectEvent;
-}
 
 export const editMode = (settings: PluginSettings): Extension =>
 	EditorState.transactionFilter.of(tr => applyCorrectedEdit(tr, settings));
@@ -145,10 +134,11 @@ function applyCorrectedEdit(tr: Transaction, settings: PluginSettings): Transact
 			}
 		}
 
-		const forwardedEvent = deriveUserEvent(tr);
 		if (!changes.length)
 			return tr;
-		return tr.startState.update({
+
+        const forwardedEvent = deriveUserEvent(tr);
+        return tr.startState.update({
 			changes,
 			selection: EditorSelection.create(selections),
 			annotations: forwardedEvent ? [Transaction.userEvent.of(forwardedEvent)] : undefined,
