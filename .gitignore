@@ -17,6 +17,3 @@ parser/build/
 
 *.zip
 .vscode/
-
-# Claude Code
-.claude/
