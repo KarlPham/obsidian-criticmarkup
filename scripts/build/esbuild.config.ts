@@ -1,6 +1,6 @@
 import esbuild, { analyzeMetafile } from "esbuild";
 
-import inlineWorkerPlugin from "esbuild-plugin-inline-worker";
+import { inlineWorkerPlugin } from "./inline-worker-plugin";
 import { sassPlugin } from "esbuild-sass-plugin";
 import esbuildSvelte from "esbuild-svelte";
 import sveltePreprocess from "svelte-preprocess";
@@ -79,7 +79,7 @@ const context = await esbuild.context({
 		inlineWorkerPlugin({
             platform: "browser",
             legalComments: 'none',
-            external: externalModules,
+            external: [],
             format: "cjs",
             treeShaking: true,
             minify: prod,
