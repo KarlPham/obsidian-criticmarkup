@@ -1,6 +1,3 @@
-[submodule "src/editor/base/parser"]
-	path = src/editor/base/parser
-	url = https://github.com/Fevol/criticmarkup-parser.git
 [submodule "src/ui/components"]
 	path = src/ui/components
 	url = https://github.com/Fevol/obsidian-svelte-component-library.git

@@ -5,7 +5,7 @@ import {
 	AdditionRange, DeletionRange, SubstitutionRange, CommentRange, HighlightRange,
 } from "../ranges";
 
-import { criticmarkupLanguage } from "../parser";
+import { criticmarkupLanguage } from "@fevol/lang-criticmarkup";
 import type { PluginSettings } from "../../../types";
 
 

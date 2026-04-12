@@ -43,6 +43,7 @@
     "dependencies": {
         "@codemirror/buildhelper": "^1.0.2",
         "@codemirror/language": "github:fevol-forks/cm-language",
+        "@fevol/lang-criticmarkup": "^2.1.0",
         "@flatten-js/interval-tree": "^1.1.4",
         "@lezer/generator": "^1.8.0",
         "@lezer/lr": "^1.4.8",

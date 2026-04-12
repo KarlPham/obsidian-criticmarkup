@@ -6,7 +6,7 @@ import {type Interval, Node} from "@flatten-js/interval-tree";
 import { CommentRange, CriticMarkupRange, CriticMarkupRanges, SuggestionType } from "../ranges";
 
 import {cursorGenerateRanges} from "./range-parser";
-import {criticmarkupLanguage} from "../parser";
+import {criticmarkupLanguage} from "@fevol/lang-criticmarkup";
 import {pluginSettingsField} from "../../uix";
 import {fullReloadEffect} from "../../settings";
 
