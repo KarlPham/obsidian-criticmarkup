@@ -16,6 +16,13 @@ Please report any errors or bug you encounter, especially when these result in l
 crashes/malfuctions in Obsidian. In the [Obsidian Discord](https://discord.com/invite/obsidianmd), there is a thread
 under `Extensions > Plugin Advanced > Commentator`, you can report bugs there, or in the [Github issues page](https://github.com/Fevol/obsidian-criticmarkup/issues).
 
+### Developing
+To set up a development environment, please follow the following instructions:
+1. Install the `bun` package manager from https://bun.sh/
+2. Clone this repository (`git clone --recurse-submodules https://github.com/Fevol/obsidian-criticmarkup.git`)
+3. Run `bun install` in the root of the repository to install all dependencies
+4. Run `bun run build:dev` to build the plugin. This will also reload the plugin in your currently active Obsidian vault
+
 ### Parser
 
 - [x] Parsing of CriticMarkup syntax (see [CriticMarkup parser library](https://github.com/Fevol/criticmarkup-parser/))
