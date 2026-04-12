@@ -46,9 +46,14 @@ export function filterRanges(
     if (location_filter !== LocationFilter.VAULT) {
         if (active_file) {
             if (location_filter === LocationFilter.FOLDER) {
-                basic_ranges = items.filter(([key, _]) =>
-                    key.startsWith(active_file.parent?.path ?? ""),
-                );
+                const parent_path = (active_file.parent?.path === "/" ? undefined : active_file.parent?.path);
+                if (!parent_path) {
+                    basic_ranges = items;
+                } else {
+                    basic_ranges = items.filter(([key, _]) =>
+                        key.startsWith(parent_path),
+                    );
+                }
             } else if (location_filter === LocationFilter.FILE) {
                 basic_ranges = items.filter(([key, _]) => key === active_file.path);
             }
