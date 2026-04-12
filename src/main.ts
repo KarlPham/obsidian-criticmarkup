@@ -1,17 +1,21 @@
 import {
-    type MarkdownFileInfo, type MarkdownPostProcessor,
+	type MarkdownFileInfo, type MarkdownPostProcessor,
 	MarkdownPreviewRenderer, MarkdownView,
-	Notice, Plugin, TFile,
+	Notice, Plugin,
 } from "obsidian";
 
-import { type EditorState, type Extension, Prec, StateField} from "@codemirror/state";
+import {EditorState, type Extension, Prec} from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { type PluginSettings } from "./types";
 
 import { Database } from "./database";
 import { beforePluginUninstallPatch, syncMarkdownViewCustomStatePatch } from "./patches";
 
-import { type CriticMarkupRange, getRangesInText, RANGE_PROTOTYPE_MAPPER, rangeParser, text_copy } from "./editor/base";
+import {
+	type CriticMarkupRange, type CriticMarkupRanges,
+	getRangesInText, text_copy,
+	RANGE_PROTOTYPE_MAPPER, rangeParser,
+} from "./editor/base";
 import { cmenuGlobalCommands, cmenuViewportCommands, commands } from "./editor/uix";
 import { bracketMatcher, editorKeypressCatcher, getEditMode, rangeCorrecter, focusAnnotation, providePluginSettingsExtension } from "./editor/uix/extensions";
 import {
@@ -194,18 +198,15 @@ export default class CommentatorPlugin extends Plugin {
 
 	async onload() {
 		if (process.env.NODE_ENV === "development") {
-			console.log("Commentator plugin loaded in debug mode");
+			console.info("Commentator plugin loaded in debug mode");
 
 			// NOTE: debug options only accessible via main Obsidian window
-			// @ts-expect-error (Assigning to window)
 			window["COMMENTATOR_DEBUG"] = {
+				app: this.app,
 				plugin: this,
 				database: this.database,
-				get ranges() {
-					return this.app.workspace.activeEditor?.editor?.cm.state.field(rangeParser).ranges.ranges;
-				},
-				get tree() {
-					return this.app.workspace.activeEditor?.editor?.cm.state.field(rangeParser).ranges.tree;
+				get ranges(): CriticMarkupRanges | undefined {
+					return window.COMMENTATOR_DEBUG.app.workspace.activeEditor?.editor?.cm.state.field(rangeParser).ranges;
 				},
 				debugRangeset
 			};
