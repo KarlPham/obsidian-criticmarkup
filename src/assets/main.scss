@@ -1,13 +1,13 @@
-@import "../ui/components/main.scss";
+@use "../ui/components/main.scss";
 
-@import "view";
-@import "settings";
-@import "editor";
-@import "modal";
+@use "view";
+@use "settings";
+@use "editor";
+@use "modal";
 
 // NOTE: Always abbreviated as "anno-gutter"
-@import "annotation-gutter";
-@import "diff-gutter";
+@use "annotation-gutter";
+@use "diff-gutter";
 
 .theme-light {
   --addition-color: var(--color-green);
